@@ -18,19 +18,31 @@ export default function FormPreview({ form, onBack }: FormPreviewProps) {
   }, [responses]);
 
   const calculateCompletion = () => {
-    const requiredQuestions = form.questions.filter((q) => q.required);
-    if (requiredQuestions.length === 0) return setCompletionPercentage(0);
+    const totalQuestions = form.questions.length;
+    if (totalQuestions === 0) return setCompletionPercentage(0);
 
-    const answeredRequired = requiredQuestions.filter(
+    const answeredQuestions = form.questions.filter(
       (q) => responses[q.id] && responses[q.id].toString().trim() !== ''
     );
 
-    const percentage = (answeredRequired.length / requiredQuestions.length) * 100;
+    const percentage = (answeredQuestions.length / totalQuestions) * 100;
     setCompletionPercentage(Math.round(percentage));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check if all required fields are filled
+    const requiredQuestions = form.questions.filter((q) => q.required);
+    const allRequiredFilled = requiredQuestions.every(
+      (q) => responses[q.id] && responses[q.id].toString().trim() !== ''
+    );
+
+    if (!allRequiredFilled) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
     setSubmitted(true);
     console.log('Form responses:', responses);
   };
@@ -148,6 +160,13 @@ export default function FormPreview({ form, onBack }: FormPreviewProps) {
 
   return (
     <div className="max-w-2xl mx-auto p-6">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold mb-2">{form.title}</h1>
+        {form.description && (
+          <p className="text-gray-600">{form.description}</p>
+        )}
+      </div>
+
       <div className="mb-6">
         <div className="flex justify-between items-center mb-2">
           <span>Form Completion:</span>
@@ -155,7 +174,9 @@ export default function FormPreview({ form, onBack }: FormPreviewProps) {
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2.5">
           <div
-            className="bg-blue-600 h-2.5 rounded-full"
+            className={`h-2.5 rounded-full transition-all duration-300 ${
+              completionPercentage === 100 ? 'bg-green-600' : 'bg-blue-600'
+            }`}
             style={{ width: `${completionPercentage}%` }}
           ></div>
         </div>

@@ -49,7 +49,6 @@ export default function FormBuilder() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setShowPreview(true);
-
     console.log('Form data:', formData);
   };
 
