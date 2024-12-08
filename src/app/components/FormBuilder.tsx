@@ -4,6 +4,13 @@ import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { FormData, Question, QuestionType } from '../types/form';
 import FormPreview from './FormPreview';
+import {
+  ShortAnswerQuestion,
+  LongAnswerQuestion,
+  SingleSelectQuestion,
+  NumberQuestion,
+  URLQuestion
+} from '@/lib/questions';
 
 export default function FormBuilder() {
   const [formData, setFormData] = useState<FormData>({
@@ -16,17 +23,29 @@ export default function FormBuilder() {
   const [showPreview, setShowPreview] = useState(false);
 
   const addQuestion = (type: QuestionType) => {
-    const newQuestion: Question = {
-      id: uuidv4(),
-      type,
-      question: '',
-      required: false,
-      ...(type === 'single' && { options: ['Option 1'] }),
-    };
+    let newQuestion;
+    
+    switch (type) {
+      case 'short':
+        newQuestion = new ShortAnswerQuestion('', false);
+        break;
+      case 'long':
+        newQuestion = new LongAnswerQuestion('', false);
+        break;
+      case 'single':
+        newQuestion = new SingleSelectQuestion('', ['Option 1'], false);
+        break;
+      case 'number':
+        newQuestion = new NumberQuestion('', false);
+        break;
+      case 'url':
+        newQuestion = new URLQuestion('', false);
+        break;
+    }
 
     setFormData((prev) => ({
       ...prev,
-      questions: [...prev.questions, newQuestion],
+      questions: [...prev.questions, newQuestion.toJSON()],
     }));
   };
 
@@ -49,6 +68,7 @@ export default function FormBuilder() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setShowPreview(true);
+    // TODO: send form data to backend
     console.log('Form data:', formData);
   };
 

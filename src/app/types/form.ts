@@ -13,8 +13,9 @@ export interface FormData {
   title: string;
   description: string;
   questions: Question[];
+  published?: boolean;
 }
 
 export interface FormResponse {
-  [key: string]: string | number; // questionId: answer
+  [key: string]: string | number;
 } 

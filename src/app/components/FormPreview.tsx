@@ -2,6 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { FormData, FormResponse, Question } from '../types/form';
+import {
+  ShortAnswerQuestion,
+  LongAnswerQuestion,
+  SingleSelectQuestion,
+  NumberQuestion,
+  URLQuestion,
+  BaseQuestion
+} from '@/lib/questions';
 
 interface FormPreviewProps {
   form: FormData;
@@ -32,14 +40,16 @@ export default function FormPreview({ form, onBack }: FormPreviewProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Check if all required fields are filled
-    const requiredQuestions = form.questions.filter((q) => q.required);
-    const allRequiredFilled = requiredQuestions.every(
-      (q) => responses[q.id] && responses[q.id].toString().trim() !== ''
-    );
+    const validationErrors = form.questions.map(question => {
+      const value = responses[question.id];
+      return {
+        question: question.question,
+        valid: validateResponse(question, value)
+      };
+    }).filter(result => !result.valid);
 
-    if (!allRequiredFilled) {
-      alert('Please fill in all required fields');
+    if (validationErrors.length > 0) {
+      alert(`Please check the following questions:\n${validationErrors.map(e => e.question).join('\n')}`);
       return;
     }
 
@@ -140,6 +150,32 @@ export default function FormPreview({ form, onBack }: FormPreviewProps) {
       default:
         return null;
     }
+  };
+
+  const validateResponse = (question: Question, value: any): boolean => {
+    let questionInstance: BaseQuestion;
+    
+    switch (question.type) {
+      case 'short':
+        questionInstance = new ShortAnswerQuestion(question.question, question.required);
+        break;
+      case 'long':
+        questionInstance = new LongAnswerQuestion(question.question, question.required);
+        break;
+      case 'single':
+        questionInstance = new SingleSelectQuestion(question.question, question.options || [], question.required);
+        break;
+      case 'number':
+        questionInstance = new NumberQuestion(question.question, question.required);
+        break;
+      case 'url':
+        questionInstance = new URLQuestion(question.question, question.required);
+        break;
+      default:
+        return false;
+    }
+
+    return (questionInstance as any).validate(value);
   };
 
   if (submitted) {
