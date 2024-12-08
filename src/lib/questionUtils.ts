@@ -1,6 +1,11 @@
-import { Question } from "@/app/types/form";
+import { Question, FormData } from "@/app/types/form";
+import { Dispatch, SetStateAction } from "react";
 
-export const updateQuestion = (questionId: string, updates: Partial<Question>) => {
+export const updateQuestion = (
+  questionId: string, 
+  updates: Partial<Question>,
+  setFormData: Dispatch<SetStateAction<FormData>>
+) => {
   setFormData((prev) => ({
     ...prev,
     questions: prev.questions.map((q) =>
@@ -9,7 +14,10 @@ export const updateQuestion = (questionId: string, updates: Partial<Question>) =
   }));
 };
 
-export const deleteQuestion = (questionId: string) => {
+export const deleteQuestion = (
+  questionId: string,
+  setFormData: Dispatch<SetStateAction<FormData>>
+) => {
   setFormData((prev) => ({
     ...prev,
     questions: prev.questions.filter((q) => q.id !== questionId),

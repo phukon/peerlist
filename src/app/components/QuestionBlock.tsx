@@ -2,21 +2,31 @@ import * as React from 'react';
 import { useMotionValue, Reorder, useDragControls } from 'framer-motion';
 import { useRaisedShadow } from '@/hooks/useRaisedShadow';
 import { ReorderIcon } from './icon/GrabHandle';
-import { Question } from '../types/form';
+import { Question, FormData } from '../types/form';
+import { updateQuestion, deleteQuestion } from '@/lib/questionUtils';
+import { Dispatch, SetStateAction } from 'react';
 
 interface Props {
   question: Question;
+  setFormData: Dispatch<SetStateAction<FormData>>;
 }
 
-export const QuestionBlock = ({ question }: Props) => {
+export const QuestionBlock = ({ question, setFormData }: Props) => {
   const y = useMotionValue(0);
   const boxShadow = useRaisedShadow(y);
   const dragControls = useDragControls();
 
+  const handleUpdateQuestion = (updates: Partial<Question>) => {
+    updateQuestion(question.id, updates, setFormData);
+  };
+
+  const handleDeleteQuestion = () => {
+    deleteQuestion(question.id, setFormData);
+  };
+
   return (
     <Reorder.Item
       value={question}
-      // id={question.id}
       style={{ boxShadow, y }}
       dragListener={false}
       dragControls={dragControls}
@@ -27,7 +37,7 @@ export const QuestionBlock = ({ question }: Props) => {
           placeholder="Question"
           value={question.question}
           onChange={(e) =>
-            updateQuestion(question.id, { question: e.target.value })
+            handleUpdateQuestion({ question: e.target.value })
           }
           className="w-full p-2 border rounded mb-2"
         />
@@ -41,7 +51,7 @@ export const QuestionBlock = ({ question }: Props) => {
                 onChange={(e) => {
                   const newOptions = [...(question.options || [])];
                   newOptions[index] = e.target.value;
-                  updateQuestion(question.id, { options: newOptions });
+                  handleUpdateQuestion({ options: newOptions });
                 }}
                 className="w-full p-2 border rounded"
               />
@@ -49,7 +59,7 @@ export const QuestionBlock = ({ question }: Props) => {
             <button
               type="button"
               onClick={() =>
-                updateQuestion(question.id, {
+                handleUpdateQuestion({
                   options: [
                     ...(question.options || []),
                     `Option ${(question.options?.length || 0) + 1}`,
@@ -68,7 +78,7 @@ export const QuestionBlock = ({ question }: Props) => {
               type="checkbox"
               checked={question.required}
               onChange={(e) =>
-                updateQuestion(question.id, { required: e.target.checked })
+                handleUpdateQuestion({ required: e.target.checked })
               }
               className="mr-2"
             />
@@ -76,7 +86,7 @@ export const QuestionBlock = ({ question }: Props) => {
           </label>
           <button
             type="button"
-            onClick={() => deleteQuestion(question.id)}
+            onClick={handleDeleteQuestion}
             className="ml-auto text-red-500 hover:text-red-600"
           >
             Delete

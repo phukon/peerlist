@@ -1,5 +1,5 @@
 'use client';
-
+import { Reorder } from 'framer-motion';
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { FormData, Question, QuestionType } from '../types/form';
@@ -9,7 +9,7 @@ import {
   LongAnswerQuestion,
   SingleSelectQuestion,
   NumberQuestion,
-  URLQuestion
+  URLQuestion,
 } from '@/lib/questions';
 import { QuestionBlock } from './QuestionBlock';
 
@@ -25,7 +25,7 @@ export default function FormBuilder() {
 
   const addQuestion = (type: QuestionType) => {
     let newQuestion;
-    
+
     switch (type) {
       case 'short':
         newQuestion = new ShortAnswerQuestion('', false);
@@ -73,12 +73,7 @@ export default function FormBuilder() {
   };
 
   if (showPreview) {
-    return (
-      <FormPreview
-        form={formData}
-        onBack={() => setShowPreview(false)}
-      />
-    );
+    return <FormPreview form={formData} onBack={() => setShowPreview(false)} />;
   }
 
   return (
@@ -107,9 +102,21 @@ export default function FormBuilder() {
       </div>
 
       <div className="space-y-4">
-        {formData.questions.map((question) => (
-          <QuestionBlock key={question.id} question={question} />
-        ))}
+        <Reorder.Group
+          axis="y"
+          onReorder={(newOrder) =>
+            setFormData((prev) => ({ ...prev, questions: newOrder }))
+          }
+          values={formData.questions}
+        >
+          {formData.questions.map((question) => (
+            <QuestionBlock
+              key={question.id}
+              question={question}
+              setFormData={setFormData}
+            />
+          ))}
+        </Reorder.Group>
       </div>
 
       <div className="flex gap-2 flex-wrap">
@@ -158,4 +165,4 @@ export default function FormBuilder() {
       </button>
     </div>
   );
-} 
+}
