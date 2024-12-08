@@ -11,6 +11,7 @@ import {
   NumberQuestion,
   URLQuestion
 } from '@/lib/questions';
+import { QuestionBlock } from './QuestionBlock';
 
 export default function FormBuilder() {
   const [formData, setFormData] = useState<FormData>({
@@ -49,21 +50,21 @@ export default function FormBuilder() {
     }));
   };
 
-  const updateQuestion = (questionId: string, updates: Partial<Question>) => {
-    setFormData((prev) => ({
-      ...prev,
-      questions: prev.questions.map((q) =>
-        q.id === questionId ? { ...q, ...updates } : q
-      ),
-    }));
-  };
+  // const updateQuestion = (questionId: string, updates: Partial<Question>) => {
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     questions: prev.questions.map((q) =>
+  //       q.id === questionId ? { ...q, ...updates } : q
+  //     ),
+  //   }));
+  // };
 
-  const deleteQuestion = (questionId: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      questions: prev.questions.filter((q) => q.id !== questionId),
-    }));
-  };
+  // const deleteQuestion = (questionId: string) => {
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     questions: prev.questions.filter((q) => q.id !== questionId),
+  //   }));
+  // };
 
   const handlePreview = () => {
     setShowPreview(true);
@@ -107,65 +108,7 @@ export default function FormBuilder() {
 
       <div className="space-y-4">
         {formData.questions.map((question) => (
-          <div key={question.id} className="border p-4 rounded">
-            <input
-              type="text"
-              placeholder="Question"
-              value={question.question}
-              onChange={(e) =>
-                updateQuestion(question.id, { question: e.target.value })
-              }
-              className="w-full p-2 border rounded mb-2"
-            />
-            {question.type === 'single' && (
-              <div className="space-y-2">
-                {question.options?.map((option, index) => (
-                  <input
-                    key={index}
-                    type="text"
-                    value={option}
-                    onChange={(e) => {
-                      const newOptions = [...(question.options || [])];
-                      newOptions[index] = e.target.value;
-                      updateQuestion(question.id, { options: newOptions });
-                    }}
-                    className="w-full p-2 border rounded"
-                  />
-                ))}
-                <button
-                  type="button"
-                  onClick={() =>
-                    updateQuestion(question.id, {
-                      options: [...(question.options || []), `Option ${(question.options?.length || 0) + 1}`],
-                    })
-                  }
-                  className="text-blue-500 hover:text-blue-600"
-                >
-                  + Add Option
-                </button>
-              </div>
-            )}
-            <div className="flex items-center mt-2">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={question.required}
-                  onChange={(e) =>
-                    updateQuestion(question.id, { required: e.target.checked })
-                  }
-                  className="mr-2"
-                />
-                Required
-              </label>
-              <button
-                type="button"
-                onClick={() => deleteQuestion(question.id)}
-                className="ml-auto text-red-500 hover:text-red-600"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
+          <QuestionBlock key={question.id} question={question} />
         ))}
       </div>
 
