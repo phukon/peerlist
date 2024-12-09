@@ -1,7 +1,20 @@
+/**
+ * TODO: Down icon in the dropdown button
+ */
+
 import { useMotionValue, Reorder, useDragControls } from 'framer-motion';
 import { useRaisedShadow } from '@/hooks/useRaisedShadow';
 import { ReorderIcon } from './icons/GrabHandle';
-import { Short, LongText, SingleSelect, UrlIcon, NumberIcon } from './icons/DropdownIcons';
+import {
+  Short,
+  LongText,
+  SingleSelect,
+  UrlIcon,
+  NumberIcon,
+  DownIcon,
+  PlusIcon,
+  DeleteIcon,
+} from './icons/DropdownIcons';
 import { Question, FormData } from '../types/form';
 import { updateQuestion, deleteQuestion } from '@/lib/questionUtils';
 import { Dispatch, SetStateAction, useState, useRef, useEffect } from 'react';
@@ -28,7 +41,10 @@ export const QuestionBlock = ({ question, setFormData }: Props) => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -97,8 +113,11 @@ export const QuestionBlock = ({ question, setFormData }: Props) => {
       dragListener={false}
       dragControls={dragControls}
     >
-      <div key={question.id} className="border p-4 rounded-2xl bg-white">
-        <div className="flex items-center gap-2">
+      <div
+        key={question.id}
+        className="border py-2 px-4 rounded-2xl bg-white hover:bg-[#FAFBFC] mt-4"
+      >
+        <div className="flex items-center gap-2 mt-2">
           <input
             type="text"
             placeholder="Write a question"
@@ -113,13 +132,16 @@ export const QuestionBlock = ({ question, setFormData }: Props) => {
               className="w-10 h-10 p-2 rounded-lg bg-white border"
             >
               {(() => {
-                const Icon = questionTypes.find(q => q.type === question.type)?.icon;
+                const Icon = questionTypes.find(
+                  (q) => q.type === question.type
+                )?.icon;
                 return Icon ? <Icon /> : null;
               })()}
             </button>
-            
+
             {isOpen && (
-              <div className="absolute right-0 mt-1 w-48 bg-white border rounded-lg shadow-lg z-10
+              <div
+                className="absolute right-0 mt-1 w-48 bg-white border rounded-lg shadow-lg z-10
                 animate-in fade-in duration-300 slide-in-from-top-1 scale-95 origin-top"
               >
                 {questionTypes.map(({ type, label, icon: Icon }) => (
@@ -141,7 +163,8 @@ export const QuestionBlock = ({ question, setFormData }: Props) => {
           </div>
           <ReorderIcon dragControls={dragControls} />
         </div>
-        <div className="flex items-center gap-4 mb-3">
+
+        <div className="flex items-center gap-4 mb-2">
           <div className="flex-1">
             <input
               type="text"
@@ -150,49 +173,52 @@ export const QuestionBlock = ({ question, setFormData }: Props) => {
               onChange={(e) =>
                 handleUpdateQuestion({ helpText: e.target.value })
               }
-              className="w-full mt-2 p-2 text-sm text-gray-500 focus:outline-none focus:border-gray-300"
+              className="w-full py-1 px-2 text-sm text-gray-500 focus:outline-none focus:border-gray-300"
             />
-            <input
-              type="text"
-              className="w-full mt-2 p-2 text-s border border-gray-300 rounded-xl focus:border-gray-300 text-gray-500"
-            />
+            {question.type !== 'single' && (
+              <input
+                type="text"
+                className="w-full mt-2 p-2 text-xs border bg-[#F6F8FA] border-[#E1E4E8] rounded-xl focus:border-gray-300 text-gray-500"
+              />
+            )}
           </div>
         </div>
 
         {question.type === 'single' && (
-          <div className="space-y-2 ml-4">
+          <div className="space-y-2 mt-2">
             {question.options?.map((option, index) => (
-              <input
-                key={index}
-                type="text"
-                value={option}
-                onChange={(e) => {
-                  const newOptions = [...(question.options || [])];
-                  newOptions[index] = e.target.value;
-                  handleUpdateQuestion({ options: newOptions });
-                }}
-                className="w-full p-2 border rounded"
-              />
+              <div key={index} className="flex items-center gap-3">
+                <div className="w-4 h-4 rounded-full border border-gray-300 flex-shrink-0" />
+                <input
+                  type="text"
+                  value={option}
+                  onChange={(e) => {
+                    const newOptions = [...(question.options || [])];
+                    newOptions[index] = e.target.value;
+                    handleUpdateQuestion({ options: newOptions });
+                  }}
+                  placeholder={`Option ${index + 1}`}
+                  className="w-full p-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-gray-300"
+                />
+              </div>
             ))}
             <button
               type="button"
               onClick={() =>
                 handleUpdateQuestion({
-                  options: [
-                    ...(question.options || []),
-                    `Option ${(question.options?.length || 0) + 1}`,
-                  ],
+                  options: [...(question.options || []), ``],
                 })
               }
-              className="text-blue-500 hover:text-blue-600"
+              className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-600 ml-7"
             >
-              + Add Option
+              <PlusIcon />
+              <span>Add option</span>
             </button>
           </div>
         )}
 
-        <div className="flex items-center mt-4">
-          <label className="flex items-center">
+        <div className="flex items-center">
+          {/* <label className="flex items-center">
             <input
               type="checkbox"
               checked={question.required}
@@ -202,13 +228,13 @@ export const QuestionBlock = ({ question, setFormData }: Props) => {
               className="mr-2"
             />
             Required
-          </label>
+          </label> */}
           <button
             type="button"
             onClick={handleDeleteQuestion}
-            className="ml-auto text-red-500 hover:text-red-600"
+            className="ml-auto text-red-700 hover:text-red-600"
           >
-            Delete
+            <DeleteIcon />
           </button>
         </div>
       </div>

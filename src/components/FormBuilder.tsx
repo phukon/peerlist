@@ -1,11 +1,20 @@
+/**
+ * TODO: wrap around the text on mobile
+ */
 'use client';
 import { Reorder } from 'framer-motion';
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { FormData, QuestionType } from '../types/form';
+import { FormData } from '../types/form';
 import FormPreview from './FormPreview';
 import { ShortAnswerQuestion } from '@/lib/questions';
 import { QuestionBlock } from './QuestionBlock';
+import {
+  DraftIcon,
+  PlusIcon,
+  PreviewIcon,
+  PublishIcon,
+} from './icons/DropdownIcons';
 
 export default function FormBuilder() {
   const [formData, setFormData] = useState<FormData>({
@@ -39,17 +48,17 @@ export default function FormBuilder() {
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, title: e.target.value }))
           }
-          className="text-base font-semibold text-gray-400 focus:outline-none"
+          className="text-base font-semibold focus:outline-none w-full"
         />
         <button
           onClick={() => setShowPreview(true)}
-          className="text-gray-400 border rounded-xl px-4 py-[6px] text-base font-semibold"
+          className="border rounded-xl px-4 py-[6px] text-base font-semibold flex items-center gap-2"
         >
-          Preview X
+          Preview <PreviewIcon />
         </button>
       </div>
 
-      <div className="space-y-4 px-6 py-4">
+      <div className="space-y-4 px-6">
         <Reorder.Group
           axis="y"
           onReorder={(newOrder) =>
@@ -70,38 +79,30 @@ export default function FormBuilder() {
       <div className="flex justify-center items-center py-4 px-6">
         <button
           onClick={addQuestion}
-          className="border border-gray-300 rounded-xl px-[14px] py-[6px] text-base font-semibold mt-5"
+          className="border border-gray-300 rounded-xl px-[14px] py-[6px] text-base font-semibold flex items-center gap-1 mt-5"
         >
-          + Add question
+          <PlusIcon /> Add question
         </button>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 bg-gray-50 py-4 px-6 border-t border-gray-200">
+      <div className="absolute bottom-0 left-0 right-0 bg-[#F6F8FAE5] py-4 px-6 border-t border-[#E1E4E8]">
         <div className="flex justify-between items-center">
           <button
-            onClick={() => {/* TODO: Implement save draft functionality */}}
-            className="flex items-center text-gray-600 hover:text-gray-800"
+            onClick={() => {
+              /* TODO: Implement save draft functionality */
+            }}
+            className="flex items-center gap-1 hover:text-gray-800 text-sm font-semibold border px-4 py-[6px] rounded-xl bg-white"
           >
-            <svg
-              className="w-5 h-5 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8"
-              />
-            </svg>
+            <DraftIcon />
             Save as Draft
           </button>
           <button
-            onClick={() => {/* TODO: Implement publish functionality */}}
-            className="bg-[#7BC5AE] hover:bg-[#6AB39C] text-white px-4 py-[6px] rounded-xl font-medium"
+            onClick={() => {
+              /* TODO: Implement publish functionality */
+            }}
+            className="flex items-center gap-1 bg-[#00AA45] border border-[#1E874B] hover:bg-[#6AB39C] text-white px-4 py-[6px] rounded-xl font-semibold text-sm"
           >
+            <PublishIcon />
             Publish form
           </button>
         </div>
