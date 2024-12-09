@@ -4,7 +4,7 @@ import { ReorderIcon } from './icons/GrabHandle';
 import { Short, LongText, SingleSelect, UrlIcon, NumberIcon } from './icons/DropdownIcons';
 import { Question, FormData } from '../types/form';
 import { updateQuestion, deleteQuestion } from '@/lib/questionUtils';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useState, useRef, useEffect } from 'react';
 import {
   ShortAnswerQuestion,
   LongAnswerQuestion,
@@ -22,6 +22,20 @@ export const QuestionBlock = ({ question, setFormData }: Props) => {
   const y = useMotionValue(0);
   const boxShadow = useRaisedShadow(y);
   const dragControls = useDragControls();
+
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleUpdateQuestion = (updates: Partial<Question>) => {
     updateQuestion(question.id, updates, setFormData);
@@ -92,28 +106,38 @@ export const QuestionBlock = ({ question, setFormData }: Props) => {
             onChange={(e) => handleUpdateQuestion({ question: e.target.value })}
             className="w-full p-2 text-sm font-semibold rounded-xl"
           />
-          <div className="relative">
-            <select
-              value={question.type}
-              onChange={(e) => handleTypeChange(e.target.value as Question['type'])}
-              className="appearance-none w-10 h-10 p-2 rounded-lg bg-white"
-              style={{ 
-                textIndent: '-999px',
-                textAlign: 'center' 
-              }}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              type="button"
+              onClick={() => setIsOpen(!isOpen)}
+              className="w-10 h-10 p-2 rounded-lg bg-white border"
             >
-              {questionTypes.map(({ type, label, icon: Icon }) => (
-                <option key={type} value={type} className="text-center">
-                  {label}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
               {(() => {
                 const Icon = questionTypes.find(q => q.type === question.type)?.icon;
                 return Icon ? <Icon /> : null;
               })()}
-            </div>
+            </button>
+            
+            {isOpen && (
+              <div className="absolute right-0 mt-1 w-48 bg-white border rounded-lg shadow-lg z-10
+                animate-in fade-in duration-300 slide-in-from-top-1 scale-95 origin-top"
+              >
+                {questionTypes.map(({ type, label, icon: Icon }) => (
+                  <button
+                    key={type}
+                    className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-2
+                      transition-colors duration-150"
+                    onClick={() => {
+                      handleTypeChange(type);
+                      setIsOpen(false);
+                    }}
+                  >
+                    <Icon />
+                    <span>{label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
           <ReorderIcon dragControls={dragControls} />
         </div>
