@@ -2,15 +2,9 @@
 import { Reorder } from 'framer-motion';
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { FormData, Question, QuestionType } from '../types/form';
+import { FormData, QuestionType } from '../types/form';
 import FormPreview from './FormPreview';
-import {
-  ShortAnswerQuestion,
-  LongAnswerQuestion,
-  SingleSelectQuestion,
-  NumberQuestion,
-  URLQuestion,
-} from '@/lib/questions';
+import { ShortAnswerQuestion } from '@/lib/questions';
 import { QuestionBlock } from './QuestionBlock';
 
 export default function FormBuilder() {
@@ -23,48 +17,13 @@ export default function FormBuilder() {
 
   const [showPreview, setShowPreview] = useState(false);
 
-  const addQuestion = (type: QuestionType) => {
-    let newQuestion;
-
-    switch (type) {
-      case 'short':
-        newQuestion = new ShortAnswerQuestion('', false);
-        break;
-      case 'long':
-        newQuestion = new LongAnswerQuestion('', false);
-        break;
-      case 'single':
-        newQuestion = new SingleSelectQuestion('', ['Option 1'], false);
-        break;
-      case 'number':
-        newQuestion = new NumberQuestion('', false);
-        break;
-      case 'url':
-        newQuestion = new URLQuestion('', false);
-        break;
-    }
-
+  const addQuestion = () => {
+    const newQuestion = new ShortAnswerQuestion('', false);
     setFormData((prev) => ({
       ...prev,
       questions: [...prev.questions, newQuestion.toJSON()],
     }));
   };
-
-  // const updateQuestion = (questionId: string, updates: Partial<Question>) => {
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     questions: prev.questions.map((q) =>
-  //       q.id === questionId ? { ...q, ...updates } : q
-  //     ),
-  //   }));
-  // };
-
-  // const deleteQuestion = (questionId: string) => {
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     questions: prev.questions.filter((q) => q.id !== questionId),
-  //   }));
-  // };
 
   const handlePreview = () => {
     setShowPreview(true);
@@ -119,43 +78,13 @@ export default function FormBuilder() {
         </Reorder.Group>
       </div>
 
-      <div className="flex gap-2 flex-wrap">
-        <button
-          type="button"
-          onClick={() => addQuestion('short')}
-          className="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
-        >
-          + Short Answer
-        </button>
-        <button
-          type="button"
-          onClick={() => addQuestion('long')}
-          className="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
-        >
-          + Long Answer
-        </button>
-        <button
-          type="button"
-          onClick={() => addQuestion('single')}
-          className="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
-        >
-          + Single Select
-        </button>
-        <button
-          type="button"
-          onClick={() => addQuestion('number')}
-          className="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
-        >
-          + Number
-        </button>
-        <button
-          type="button"
-          onClick={() => addQuestion('url')}
-          className="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
-        >
-          + URL
-        </button>
-      </div>
+      <button
+        type="button"
+        onClick={addQuestion}
+        className="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300 w-full"
+      >
+        Add Question
+      </button>
 
       <button
         onClick={handlePreview}

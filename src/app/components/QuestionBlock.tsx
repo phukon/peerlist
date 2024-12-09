@@ -5,6 +5,13 @@ import { ReorderIcon } from './icon/GrabHandle';
 import { Question, FormData } from '../types/form';
 import { updateQuestion, deleteQuestion } from '@/lib/questionUtils';
 import { Dispatch, SetStateAction } from 'react';
+import {
+  ShortAnswerQuestion,
+  LongAnswerQuestion,
+  SingleSelectQuestion,
+  NumberQuestion,
+  URLQuestion,
+} from '@/lib/questions';
 
 interface Props {
   question: Question;
@@ -24,6 +31,38 @@ export const QuestionBlock = ({ question, setFormData }: Props) => {
     deleteQuestion(question.id, setFormData);
   };
 
+  const questionTypes = [
+    { type: 'short', label: 'Short Answer' },
+    { type: 'long', label: 'Long Answer' },
+    { type: 'single', label: 'Single Select' },
+    { type: 'number', label: 'Number' },
+    { type: 'url', label: 'URL' },
+  ] as const;
+
+  const handleTypeChange = (newType: Question['type']) => {
+    let updatedQuestion;
+    
+    switch (newType) {
+      case 'short':
+        updatedQuestion = new ShortAnswerQuestion(question.question, question.required);
+        break;
+      case 'long':
+        updatedQuestion = new LongAnswerQuestion(question.question, question.required);
+        break;
+      case 'single':
+        updatedQuestion = new SingleSelectQuestion(question.question, ['Option 1'], question.required);
+        break;
+      case 'number':
+        updatedQuestion = new NumberQuestion(question.question, question.required);
+        break;
+      case 'url':
+        updatedQuestion = new URLQuestion(question.question, question.required);
+        break;
+    }
+
+    handleUpdateQuestion(updatedQuestion.toJSON());
+  };
+
   return (
     <Reorder.Item
       value={question}
@@ -32,15 +71,28 @@ export const QuestionBlock = ({ question, setFormData }: Props) => {
       dragControls={dragControls}
     >
       <div key={question.id} className="border p-4 rounded">
-        <input
-          type="text"
-          placeholder="Question"
-          value={question.question}
-          onChange={(e) =>
-            handleUpdateQuestion({ question: e.target.value })
-          }
-          className="w-full p-2 border rounded mb-2"
-        />
+        <div className="flex gap-2 mb-2">
+          <input
+            type="text"
+            placeholder="Question"
+            value={question.question}
+            onChange={(e) =>
+              handleUpdateQuestion({ question: e.target.value })
+            }
+            className="flex-1 p-2 border rounded"
+          />
+          <select
+            value={question.type}
+            onChange={(e) => handleTypeChange(e.target.value as Question['type'])}
+            className="p-2 border rounded bg-white"
+          >
+            {questionTypes.map(({ type, label }) => (
+              <option key={type} value={type}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
         {question.type === 'single' && (
           <div className="space-y-2">
             {question.options?.map((option, index) => (
