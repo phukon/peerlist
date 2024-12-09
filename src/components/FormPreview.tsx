@@ -41,20 +41,18 @@ export default function FormPreview({ form, onBack }: FormPreviewProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const validationErrors = form.questions
-      .map((question) => {
-        const value = responses[question.id];
-        return {
-          question: question.question,
-          valid: validateResponse(question, value),
-        };
-      })
-      .filter((result) => !result.valid);
+    // Check if all required questions are answered
+    const unansweredQuestions = form.questions.filter(question => {
+      if (!question.required) return false; // Skip non-required questions
+      
+      const response = responses[question.id];
+      return !response || (typeof response === 'string' && response.trim() === '');
+    });
 
-    if (validationErrors.length > 0) {
+    if (unansweredQuestions.length > 0) {
       alert(
-        `Please check the following questions:\n${validationErrors
-          .map((e) => e.question)
+        `Please answer the following required questions:\n${unansweredQuestions
+          .map((q) => q.question)
           .join('\n')}`
       );
       return;
@@ -178,6 +176,11 @@ export default function FormPreview({ form, onBack }: FormPreviewProps) {
   };
 
   const validateResponse = (question: Question, value: unknown): boolean => {
+    // First check if the value exists and isn't empty
+    if (!value || (typeof value === 'string' && value.trim() === '')) {
+      return false;
+    }
+
     let questionInstance: BaseQuestion;
 
     switch (question.type) {
@@ -271,15 +274,15 @@ export default function FormPreview({ form, onBack }: FormPreviewProps) {
           {form.questions.map((question) => (
             <div
               key={question.id}
-              className="border py-2 px-4 rounded-2xl bg-white hover:bg-[#FAFBFC]"
+              className={`border py-2 px-4 rounded-2xl bg-white hover:bg-[#FAFBFC] ${
+                question.required && !responses[question.id] ? 'border-red-200' : ''
+              }`}
             >
               <label className="block mb-2">
                 <span className="text-sm font-semibold">
                   {question.question}
+                  {question.required && <span className="text-red-500 ml-1">*</span>}
                 </span>
-                {question.required && (
-                  <span className="text-red-500 ml-1">*</span>
-                )}
                 {question.helpText && (
                   <p className="text-sm text-gray-500 mt-1">
                     {question.helpText}
