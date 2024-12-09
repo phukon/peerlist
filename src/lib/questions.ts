@@ -1,4 +1,4 @@
-import { QuestionType, FormData } from "@/app/types/form";
+import { QuestionType, FormData } from "@/types/form";
 
 abstract class BaseQuestion {
   protected id: string;
@@ -12,7 +12,7 @@ abstract class BaseQuestion {
     this.required = required;
   }
 
-  abstract validate(value: any): boolean;
+  abstract validate(value: unknown): boolean;
 
   toJSON() {
     return {

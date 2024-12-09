@@ -34,6 +34,18 @@ export default function FormBuilder() {
     }));
   };
 
+  const validateForm = (form: FormData): boolean => {
+    return form.questions.every(question => question.question.trim() !== '');
+  };
+
+  const handlePreviewClick = () => {
+    if (!validateForm(formData)) {
+      alert('Please fill in all question fields before previewing');
+      return;
+    }
+    setShowPreview(true);
+  };
+
   if (showPreview) {
     return <FormPreview form={formData} onBack={() => setShowPreview(false)} />;
   }
@@ -51,7 +63,7 @@ export default function FormBuilder() {
           className="text-base font-semibold focus:outline-none w-full"
         />
         <button
-          onClick={() => setShowPreview(true)}
+          onClick={handlePreviewClick}
           className="border rounded-xl px-4 py-[6px] text-base font-semibold flex items-center gap-2"
         >
           Preview <PreviewIcon />

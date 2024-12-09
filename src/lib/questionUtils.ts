@@ -1,4 +1,4 @@
-import { Question, FormData } from "@/app/types/form";
+import { Question, FormData } from "@/types/form";
 import { Dispatch, SetStateAction } from "react";
 
 export const updateQuestion = (

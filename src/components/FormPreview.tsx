@@ -66,8 +66,8 @@ export default function FormPreview({ form, onBack }: FormPreviewProps) {
 
   const renderQuestion = (question: Question) => {
     const value = responses[question.id] || '';
-    const baseInputClass =
-      'w-full p-2 text-sm border border-[#E1E4E8] rounded-xl focus:border-gray-300 bg-[#F6F8FA]';
+    // const baseInputClass =
+    //   'w-full p-2 text-sm border border-[#E1E4E8] rounded-xl focus:border-gray-300 bg-[#F6F8FA]';
 
     switch (question.type) {
       case 'short':
@@ -177,7 +177,7 @@ export default function FormPreview({ form, onBack }: FormPreviewProps) {
     }
   };
 
-  const validateResponse = (question: Question, value: any): boolean => {
+  const validateResponse = (question: Question, value: unknown): boolean => {
     let questionInstance: BaseQuestion;
 
     switch (question.type) {
@@ -216,7 +216,7 @@ export default function FormPreview({ form, onBack }: FormPreviewProps) {
         return false;
     }
 
-    return (questionInstance as any).validate(value);
+    return (questionInstance as BaseQuestion).validate(value);
   };
 
   if (submitted) {

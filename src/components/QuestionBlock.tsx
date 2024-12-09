@@ -1,7 +1,3 @@
-/**
- * TODO: Down icon in the dropdown button
- */
-
 import { useMotionValue, Reorder, useDragControls } from 'framer-motion';
 import { useRaisedShadow } from '@/hooks/useRaisedShadow';
 import { ReorderIcon } from './icons/GrabHandle';
@@ -11,7 +7,7 @@ import {
   SingleSelect,
   UrlIcon,
   NumberIcon,
-  DownIcon,
+  // DownIcon,
   PlusIcon,
   DeleteIcon,
 } from './icons/DropdownIcons';
