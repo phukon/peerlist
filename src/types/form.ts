@@ -6,6 +6,7 @@ export interface Question {
   question: string;
   required: boolean;
   options?: string[]; // For single select questions
+  helpText?: string;
 }
 
 export interface FormData {

@@ -70,31 +70,41 @@ export const QuestionBlock = ({ question, setFormData }: Props) => {
       dragListener={false}
       dragControls={dragControls}
     >
-      <div key={question.id} className="border p-4 rounded">
-        <div className="flex gap-2 mb-2">
-          <input
-            type="text"
-            placeholder="Question"
-            value={question.question}
-            onChange={(e) =>
-              handleUpdateQuestion({ question: e.target.value })
-            }
-            className="flex-1 p-2 border rounded"
-          />
-          <select
-            value={question.type}
-            onChange={(e) => handleTypeChange(e.target.value as Question['type'])}
-            className="p-2 border rounded bg-white"
-          >
-            {questionTypes.map(({ type, label }) => (
-              <option key={type} value={type}>
-                {label}
-              </option>
-            ))}
-          </select>
+      <div key={question.id} className="border p-4 rounded bg-white">
+        <div className="flex items-center gap-4 mb-3">
+          <div className="flex-1">
+            <input
+              type="text"
+              placeholder="Write a question"
+              value={question.question}
+              onChange={(e) => handleUpdateQuestion({ question: e.target.value })}
+              className="w-full p-2 font-medium text-lg"
+            />
+            <input
+              type="text"
+              placeholder="Write a help text or caption (leave empty if not needed)"
+              value={question.helpText || ''}
+              onChange={(e) => handleUpdateQuestion({ helpText: e.target.value })}
+              className="w-full mt-2 p-2 text-sm text-gray-500 focus:outline-none focus:border-gray-300"
+            />
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <select
+              value={question.type}
+              onChange={(e) => handleTypeChange(e.target.value as Question['type'])}
+              className="p-2 border rounded bg-white"
+            >
+              {questionTypes.map(({ type, label }) => (
+                <option key={type} value={type}>{label}</option>
+              ))}
+            </select>
+            <ReorderIcon dragControls={dragControls} />
+          </div>
         </div>
+
         {question.type === 'single' && (
-          <div className="space-y-2">
+          <div className="space-y-2 ml-4">
             {question.options?.map((option, index) => (
               <input
                 key={index}
@@ -124,14 +134,13 @@ export const QuestionBlock = ({ question, setFormData }: Props) => {
             </button>
           </div>
         )}
-        <div className="flex items-center mt-2">
+
+        <div className="flex items-center mt-4">
           <label className="flex items-center">
             <input
               type="checkbox"
               checked={question.required}
-              onChange={(e) =>
-                handleUpdateQuestion({ required: e.target.checked })
-              }
+              onChange={(e) => handleUpdateQuestion({ required: e.target.checked })}
               className="mr-2"
             />
             Required
@@ -145,7 +154,6 @@ export const QuestionBlock = ({ question, setFormData }: Props) => {
           </button>
         </div>
       </div>
-      <ReorderIcon dragControls={dragControls} />
     </Reorder.Item>
   );
 };

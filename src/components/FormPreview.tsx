@@ -223,6 +223,9 @@ export default function FormPreview({ form, onBack }: FormPreviewProps) {
           <div key={question.id} className="border p-4 rounded">
             <label className="block mb-2">
               {question.question}
+              {question.helpText && (
+                <p className="text-sm text-gray-500 mt-1">{question.helpText}</p>
+              )}
               {question.required && (
                 <span className="text-red-500 ml-1">*</span>
               )}
