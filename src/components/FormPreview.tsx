@@ -242,14 +242,22 @@ export default function FormPreview({ form, onBack }: FormPreviewProps) {
 
   return (
     <div className="min-h-screen bg-white flex flex-col border-2 border-gray-300 md:mx-52 xl:mx-72 relative pb-16">
-      <div className="flex flex-row justify-between py-4 px-6 border-b-2 border-gray-300 items-center">
+      <div className="sticky top-0 z-10 bg-white flex flex-row justify-between py-4 px-6 border-b-2 border-gray-300 items-center">
         <h1 className="text-base font-semibold">{form.title}</h1>
-        <button
-          onClick={onBack}
-          className="border rounded-xl px-4 py-[6px] text-base font-semibold flex items-center gap-2"
-        >
-          Back to Editor <PreviewIcon />
-        </button>
+        <div className="flex items-center gap-4 w-1/2">
+          <span className="text-sm text-gray-600">Form completeness —</span>
+          <div className="flex-1">
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div
+                className="h-2 rounded-full transition-all duration-300 bg-[#00AA45]"
+                style={{ width: `${completionPercentage}%` }}
+              />
+            </div>
+          </div>
+          <span className="text-sm font-semibold min-w-[40px]">
+            {completionPercentage}%
+          </span>
+        </div>
       </div>
 
       {form.description && (
@@ -257,23 +265,6 @@ export default function FormPreview({ form, onBack }: FormPreviewProps) {
           <p className="text-gray-600">{form.description}</p>
         </div>
       )}
-
-      <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 z-10">
-        <div className="mb-2">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm text-gray-600">Form Completion:</span>
-            <span className="text-sm font-semibold">
-              {completionPercentage}%
-            </span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div
-              className=" h-2 rounded-full transition-all duration-300 bg-[#00AA45]"
-              style={{ width: `${completionPercentage}%` }}
-            ></div>
-          </div>
-        </div>
-      </div>
 
       <div className="px-6 py-4">
         <form onSubmit={handleSubmit} className="space-y-4">
